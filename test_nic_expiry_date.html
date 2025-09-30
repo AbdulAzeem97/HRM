@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NIC Expiry Date Field Test</title>
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-datepicker.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .info { background: #e7f3ff; border-color: #b3d4fc; }
+        .form-group { margin: 15px 0; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"] { width: 250px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 10px 20px; margin: 5px; cursor: pointer; border: none; border-radius: 4px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .result { margin-top: 10px; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🆔 NIC Expiry Date Field Test</h1>
+
+    <div class="test-section info">
+        <h3>✅ Implementation Summary</h3>
+        <ul>
+            <li><strong>View Updated:</strong> Added date and datepicker classes to NIC Expiry field</li>
+            <li><strong>Controller Updated:</strong> Added date conversion logic</li>
+            <li><strong>Migration Created:</strong> Ensures database field is DATE type</li>
+            <li><strong>Format Standardized:</strong> Uses dd-mm-yyyy display format</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>🧪 NIC Expiry Date Field Test</h3>
+
+        <form id="nic-test-form">
+            <div class="form-group">
+                <label for="nic_expiry">NIC Expiry Date:</label>
+                <input type="text"
+                       name="nic_expiry"
+                       id="nic_expiry"
+                       placeholder="DD-MM-YYYY"
+                       class="form-control date datepicker">
+                <small>Click to open datepicker with dd-mm-yyyy format</small>
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="testDateValidation()">
+                    Validate Date Format
+                </button>
+                <button type="button" class="btn btn-success" onclick="simulateFormSubmission()">
+                    Simulate Form Submission
+                </button>
+            </div>
+        </form>
+
+        <div id="test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>📅 Date Format Examples</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #f8f9fa;">
+                <th style="border: 1px solid #ddd; padding: 8px;">Input Format</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Display</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Database Storage</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Status</th>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px;">25-12-2024</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">25-12-2024</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">2024-12-25</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">✅ Correct</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px;">01-06-2025</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">01-06-2025</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">2025-06-01</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">✅ Correct</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px;">Empty</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">✅ Allowed</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="test-section">
+        <h3>🔧 Database Migration</h3>
+        <p><strong>Migration File:</strong> <code>2024_12_15_000000_add_or_modify_nic_expiry_to_employees_table.php</code></p>
+        <p><strong>To run migration:</strong></p>
+        <div style="background: #f8f9fa; padding: 10px; border: 1px solid #dee2e6; font-family: monospace;">
+            php artisan migrate
+        </div>
+        <p><strong>What it does:</strong></p>
+        <ul>
+            <li>Adds nic_expiry column if it doesn't exist</li>
+            <li>Converts existing data to proper date format</li>
+            <li>Changes column type to DATE</li>
+            <li>Handles dd-mm-yyyy and dd/mm/yyyy input formats</li>
+        </ul>
+    </div>
+
+    <!-- Include required scripts -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/jquery/bootstrap-datepicker.min.js"></script>
+    <script src="js/global-datepicker-config.js"></script>
+
+    <script>
+    // Test date validation
+    function testDateValidation() {
+        var dateValue = document.getElementById('nic_expiry').value;
+        var resultsDiv = document.getElementById('test-results');
+
+        var result = '<div class="result">';
+        result += '<h4>Validation Results:</h4>';
+
+        if (!dateValue) {
+            result += '<p>❌ No date entered</p>';
+        } else {
+            // Test various formats
+            var ddmmyyyy = /^\d{2}-\d{2}-\d{4}$/;
+            var ddmmyyyy_slash = /^\d{2}\/\d{2}\/\d{4}$/;
+
+            if (ddmmyyyy.test(dateValue)) {
+                result += '<p>✅ Valid dd-mm-yyyy format: ' + dateValue + '</p>';
+
+                // Test conversion to database format
+                var parts = dateValue.split('-');
+                var dbFormat = parts[2] + '-' + parts[1] + '-' + parts[0];
+                result += '<p>🗄️ Database format: ' + dbFormat + '</p>';
+
+                // Test date validity
+                var dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+                if (dateObj.getFullYear() == parts[2] &&
+                    dateObj.getMonth() == parts[1] - 1 &&
+                    dateObj.getDate() == parts[0]) {
+                    result += '<p>✅ Valid date</p>';
+                } else {
+                    result += '<p>❌ Invalid date</p>';
+                }
+            } else if (ddmmyyyy_slash.test(dateValue)) {
+                result += '<p>⚠️ Valid dd/mm/yyyy format but should use dd-mm-yyyy: ' + dateValue + '</p>';
+            } else {
+                result += '<p>❌ Invalid format. Expected: dd-mm-yyyy</p>';
+            }
+        }
+
+        result += '</div>';
+        resultsDiv.innerHTML = result;
+    }
+
+    // Simulate form submission
+    function simulateFormSubmission() {
+        var dateValue = document.getElementById('nic_expiry').value;
+        var resultsDiv = document.getElementById('test-results');
+
+        var result = '<div class="result" style="background: #e7f3ff;">';
+        result += '<h4>Form Submission Simulation:</h4>';
+
+        if (!dateValue) {
+            result += '<p><strong>Input:</strong> Empty</p>';
+            result += '<p><strong>PHP Processing:</strong> $request->nic_expiry ? date("Y-m-d", strtotime($request->nic_expiry)) : null</p>';
+            result += '<p><strong>Database Value:</strong> NULL</p>';
+            result += '<p><strong>Status:</strong> ✅ Handled correctly</p>';
+        } else {
+            result += '<p><strong>Input:</strong> ' + dateValue + '</p>';
+            result += '<p><strong>PHP Processing:</strong> date("Y-m-d", strtotime("' + dateValue + '"))</p>';
+
+            // Simulate PHP date conversion
+            try {
+                var parts = dateValue.split('-');
+                if (parts.length === 3) {
+                    var dbFormat = parts[2] + '-' + parts[1] + '-' + parts[0];
+                    result += '<p><strong>Database Value:</strong> ' + dbFormat + '</p>';
+                    result += '<p><strong>Status:</strong> ✅ Converted successfully</p>';
+                } else {
+                    result += '<p><strong>Database Value:</strong> Invalid</p>';
+                    result += '<p><strong>Status:</strong> ❌ Conversion failed</p>';
+                }
+            } catch (e) {
+                result += '<p><strong>Database Value:</strong> Error</p>';
+                result += '<p><strong>Status:</strong> ❌ Conversion error</p>';
+            }
+        }
+
+        result += '</div>';
+        resultsDiv.innerHTML = result;
+    }
+
+    // Initialize datepicker when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('NIC Expiry date test page loaded');
+
+        // Test if global datepicker config is working
+        setTimeout(function() {
+            var input = document.getElementById('nic_expiry');
+            if (typeof jQuery !== 'undefined' && jQuery(input).data('datepicker')) {
+                console.log('✅ Datepicker initialized successfully');
+            } else {
+                console.log('⚠️ Datepicker not initialized - checking manual initialization');
+                if (typeof jQuery !== 'undefined') {
+                    jQuery('#nic_expiry').datepicker({
+                        format: 'dd-mm-yyyy',
+                        autoclose: true,
+                        todayHighlight: true
+                    });
+                }
+            }
+        }, 1000);
+    });
+    </script>
+</body>
+</html>

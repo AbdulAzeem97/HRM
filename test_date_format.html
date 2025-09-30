@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Date Format Test - dd-mm-yyyy</title>
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-datepicker.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #e7f3ff; border-color: #b3d4fc; }
+        .form-group { margin: 15px 0; }
+        label { font-weight: bold; }
+        input[type="text"] { width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>🗓️ Date Format Test - dd-mm-yyyy Standardization</h1>
+
+    <div class="test-section info">
+        <h3>✅ Project Configuration</h3>
+        <p><strong>Environment Variables:</strong></p>
+        <ul>
+            <li><code>Date_Format=d-m-Y</code> (PHP format)</li>
+            <li><code>Date_Format_JS=dd-mm-yyyy</code> (JavaScript format)</li>
+        </ul>
+        <p><strong>Bootstrap Datepicker Format:</strong> dd-mm-yyyy</p>
+    </div>
+
+    <div class="test-section">
+        <h3>🧪 Datepicker Tests</h3>
+
+        <div class="form-group">
+            <label>Standard Date Field (.date class):</label><br>
+            <input type="text" class="form-control date" placeholder="Select date">
+            <small>Should open datepicker with dd-mm-yyyy format</small>
+        </div>
+
+        <div class="form-group">
+            <label>Generic Datepicker (.datepicker class):</label><br>
+            <input type="text" class="form-control datepicker" placeholder="Select date">
+            <small>Should open datepicker with dd-mm-yyyy format</small>
+        </div>
+
+        <div class="form-group">
+            <label>Month-Year Picker (.month_year class):</label><br>
+            <input type="text" class="form-control month_year" placeholder="Select month-year">
+            <small>Should open month-year picker with mm-yyyy format</small>
+        </div>
+
+        <div class="form-group">
+            <label>Data Attribute Datepicker:</label><br>
+            <input type="text" class="form-control" data-provide="datepicker" placeholder="Select date">
+            <small>Should open datepicker with dd-mm-yyyy format</small>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>📅 Current Date Display</h3>
+        <p><strong>Today's Date:</strong> <span id="current-date"></span></p>
+        <p><strong>PHP Format (d-m-Y):</strong> <span id="php-format"></span></p>
+        <p><strong>JS Format (dd-mm-yyyy):</strong> <span id="js-format"></span></p>
+    </div>
+
+    <div class="test-section">
+        <h3>🔧 Helper Functions Test</h3>
+        <button onclick="testHelperFunctions()" class="btn btn-primary">Test Date Helper Functions</button>
+        <div id="helper-results" style="margin-top: 10px;"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 Console Output</h3>
+        <p>Open browser console (F12) to see detailed logs.</p>
+        <button onclick="logDateInfo()" class="btn btn-info">Log Date Information</button>
+    </div>
+
+    <!-- Include required scripts -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/jquery/bootstrap-datepicker.min.js"></script>
+    <script src="js/global-datepicker-config.js"></script>
+
+    <script>
+    // Display current date in different formats
+    function displayCurrentDate() {
+        var now = new Date();
+        var day = ('0' + now.getDate()).slice(-2);
+        var month = ('0' + (now.getMonth() + 1)).slice(-2);
+        var year = now.getFullYear();
+
+        document.getElementById('current-date').textContent = now.toLocaleDateString();
+        document.getElementById('php-format').textContent = day + '-' + month + '-' + year;
+        document.getElementById('js-format').textContent = day + '-' + month + '-' + year;
+    }
+
+    // Test helper functions
+    function testHelperFunctions() {
+        var results = '<div>';
+        var testDate = new Date(2024, 11, 25); // December 25, 2024
+
+        if (typeof window.formatDate === 'function') {
+            results += '<p>✅ formatDate function available</p>';
+            results += '<p>formatDate(testDate): ' + window.formatDate(testDate) + '</p>';
+            results += '<p>formatDate(testDate, "mm-yyyy"): ' + window.formatDate(testDate, 'mm-yyyy') + '</p>';
+        } else {
+            results += '<p>❌ formatDate function not available</p>';
+        }
+
+        if (typeof window.parseDate === 'function') {
+            results += '<p>✅ parseDate function available</p>';
+            var parsed = window.parseDate('25-12-2024');
+            results += '<p>parseDate("25-12-2024"): ' + (parsed ? parsed.toLocaleDateString() : 'Failed') + '</p>';
+        } else {
+            results += '<p>❌ parseDate function not available</p>';
+        }
+
+        results += '</div>';
+        document.getElementById('helper-results').innerHTML = results;
+    }
+
+    // Log date information to console
+    function logDateInfo() {
+        console.log('=== DATE FORMAT TEST ===');
+        console.log('Current Date:', new Date());
+        console.log('jQuery loaded:', typeof jQuery !== 'undefined');
+        console.log('Datepicker loaded:', typeof jQuery !== 'undefined' && typeof jQuery.fn.datepicker !== 'undefined');
+
+        if (typeof jQuery !== 'undefined' && typeof jQuery.fn.datepicker !== 'undefined') {
+            console.log('Datepicker defaults:', jQuery.fn.datepicker.defaults);
+        }
+
+        console.log('Global formatDate function:', typeof window.formatDate);
+        console.log('Global parseDate function:', typeof window.parseDate);
+
+        // Test all date inputs
+        jQuery('.date, .datepicker, .month_year').each(function(index) {
+            var $this = jQuery(this);
+            console.log('Input ' + index + ':', {
+                class: $this.attr('class'),
+                hasDatepicker: $this.data('datepicker') ? true : false,
+                value: $this.val()
+            });
+        });
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        displayCurrentDate();
+
+        // Log when global config is loaded
+        setTimeout(function() {
+            console.log('Global datepicker configuration should be loaded');
+            logDateInfo();
+        }, 1000);
+    });
+    </script>
+</body>
+</html>

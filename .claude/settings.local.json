@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(composer install:*)",
+      "Read(//c/xampp/php/**)",
+      "Bash(php composer.phar install:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(php:*)",
+      "Read(//c/xampp/apache/logs/**)",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\":*)",
+      "Read(//c/Users/Bilal Traders/AppData/Local/Packages/5319275A.WhatsAppDesktop_cv1g1gvanyjgm/TempState/EBE1C90BB54693AD08A177AE924F626D/**)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

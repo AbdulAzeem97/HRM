@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DataTables Fix Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <h1>DataTables Fix Test</h1>
+    <p>Testing if the DataTables Ajax endpoint is working...</p>
+
+    <div id="test-results"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Test the Ajax endpoint directly
+            $.ajax({
+                url: '/ttphrm/staff/employees',
+                type: 'GET',
+                data: {
+                    draw: 1,
+                    start: 0,
+                    length: 10,
+                    'columns[0][data]': 'id',
+                    'columns[0][name]': '',
+                    'columns[0][searchable]': false,
+                    'columns[0][orderable]': false,
+                    'columns[1][data]': 'name',
+                    'columns[1][name]': 'name',
+                    'columns[1][searchable]': true,
+                    'columns[1][orderable]': true,
+                    'columns[2][data]': 'company',
+                    'columns[2][name]': 'company',
+                    'columns[2][searchable]': true,
+                    'columns[2][orderable]': true,
+                    'columns[3][data]': 'contacts',
+                    'columns[3][name]': 'contacts',
+                    'columns[3][searchable]': true,
+                    'columns[3][orderable]': true,
+                    'columns[4][data]': 'action',
+                    'columns[4][name]': 'action',
+                    'columns[4][searchable]': true,
+                    'columns[4][orderable]': false,
+                    'search[value]': '',
+                    'search[regex]': false,
+                    company_id: '',
+                    department_id: '',
+                    designation_id: '',
+                    office_shift_id: ''
+                },
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    console.log('✅ Ajax request successful:', response);
+                    $('#test-results').html('<div style="color: green;">✅ DataTables Ajax endpoint is working correctly!</div><pre>' + JSON.stringify(response, null, 2) + '</pre>');
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Ajax request failed:', xhr, status, error);
+                    $('#test-results').html('<div style="color: red;">❌ DataTables Ajax endpoint failed with status: ' + xhr.status + '</div><div>Error: ' + error + '</div><div>Response: ' + xhr.responseText + '</div>');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

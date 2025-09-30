@@ -1,0 +1,4 @@
+[Mon Sep 15 14:38:14 2025] PHP 8.1.33 Development Server (http://localhost:8000) started
+[Mon Sep 15 14:39:46 2025] [::1]:63800 Accepted
+[Mon Sep 15 14:39:46 2025] [::1]:63800 [404]: GET /staff/employees?draw=1&start=0&length=10 - No such file or directory
+[Mon Sep 15 14:39:46 2025] [::1]:63800 Closing

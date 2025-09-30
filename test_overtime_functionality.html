@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Overtime Functionality</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin: 15px 0; }
+        .form-check { display: flex; align-items: center; gap: 10px; }
+        .btn { padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; }
+        .btn:hover { background: #218838; }
+        .test-info { background: #f8f9fa; padding: 15px; margin: 20px 0; border-left: 4px solid #007bff; }
+    </style>
+</head>
+<body>
+    <h2>Overtime Settings Test</h2>
+
+    <div class="test-info">
+        <h3>Test Instructions:</h3>
+        <ol>
+            <li>Check the "Allow Overtime" checkbox</li>
+            <li>Set required hours (default: 9)</li>
+            <li>Click "Update" button</li>
+            <li>Should show a success toast notification</li>
+            <li>Check browser console for debug info</li>
+        </ol>
+    </div>
+
+    <form id="overtime_settings_form" method="post">
+        <input type="hidden" name="_token" value="test_csrf_token">
+
+        <div class="form-group">
+            <div class="form-check">
+                <input type="checkbox" name="overtime_allowed" id="overtime_allowed" value="1" checked>
+                <label for="overtime_allowed">Allow Overtime</label>
+            </div>
+            <small>Check to allow this employee to earn overtime pay</small>
+        </div>
+
+        <div class="form-group">
+            <label>Required Hours Per Day</label><br>
+            <input type="number" min="1" max="24" name="required_hours_per_day"
+                   id="required_hours_per_day" value="9" style="width: 100px;">
+            <br><small>Daily shift hours required before overtime starts</small>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" class="btn" value="Update">
+        </div>
+    </form>
+
+    <div id="test-results"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Test page loaded');
+
+        var form = document.getElementById('overtime_settings_form');
+        var resultsDiv = document.getElementById('test-results');
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Test form submitted');
+
+                var formData = new FormData(form);
+
+                // Log form data
+                console.log('Form data:');
+                for (var pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+
+                // Simulate successful response for testing
+                var mockResponse = {
+                    success: "Overtime Settings Updated Successfully."
+                };
+
+                console.log('Mock response:', mockResponse);
+
+                // Test the notification system
+                if (mockResponse.success) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: mockResponse.success,
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+
+                        resultsDiv.innerHTML = '<div style="color: green; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; margin: 10px 0;">✅ Toast notification should appear in top-right corner</div>';
+                    } else {
+                        alert('Success: ' + mockResponse.success);
+                        resultsDiv.innerHTML = '<div style="color: red; padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; margin: 10px 0;">❌ SweetAlert2 not loaded - using basic alert</div>';
+                    }
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html>
