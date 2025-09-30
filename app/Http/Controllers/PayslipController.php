@@ -339,14 +339,6 @@ class PayslipController extends Controller {
 		// Prepare variables for PDF view - Handle both JSON strings and arrays
 		$overtimes_data = is_string($payslip->overtimes) ? json_decode($payslip->overtimes, true) ?: [] : (is_array($payslip->overtimes) ? $payslip->overtimes : []);
 
-		// Debug logging
-		\Log::info('Payslip PDF Data Debug', [
-			'employee_id' => $payslip->employee_id,
-			'month_year' => $payslip->month_year,
-			'overtimes_raw' => $payslip->overtimes,
-			'overtimes_decoded' => $overtimes_data,
-			'overtimes_count' => count($overtimes_data)
-		]);
 
 		$pdfData = array_merge($payslip->toArray(), $employee, [
 			'hours_amount' => $amount_hours,

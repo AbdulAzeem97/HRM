@@ -177,14 +177,6 @@
                             $total_earnings = $total_earnings + (float) $overtime_amount;
                         @endphp
                     @endforeach
-                @else
-                    <!-- DEBUG: Overtime count: {{ count($overtimes ?? []) }} -->
-                    @if(count($overtimes ?? []) > 0)
-                        <tr>
-                            <td class="py-3">DEBUG: Overtime Available</td>
-                            <td>{{ count($overtimes) }} records</td>
-                        </tr>
-                    @endif
                 @endif
 
                 <tr>
