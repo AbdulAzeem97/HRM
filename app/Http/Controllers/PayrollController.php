@@ -146,6 +146,7 @@ class PayrollController extends Controller {
 						->where('company_id', $request->filter_company)
 						->where('department_id', $request->filter_department)
 						->whereIntegerInRaw('id',$salary_basic_employees)
+						->whereIntegerNotInRaw('id',$paid_employees)
                         ->where('is_active',1)
                         ->where('exit_date',NULL)
 						->get();
@@ -192,6 +193,7 @@ class PayrollController extends Controller {
 						->select('id', 'first_name', 'last_name', 'basic_salary', 'payslip_type','pension_type','pension_amount','overtime_allowed','required_hours_per_day','office_shift_id')
 						->where('company_id', $request->filter_company)
 						->whereIntegerInRaw('id',$salary_basic_employees)
+						->whereIntegerNotInRaw('id',$paid_employees)
                         ->where('is_active',1)->where('exit_date',NULL)
 						->get();
 				} else
@@ -234,9 +236,8 @@ class PayrollController extends Controller {
 						},
 						'officeShift'])
 						->select('id', 'first_name', 'last_name', 'basic_salary', 'payslip_type','pension_type','pension_amount','overtime_allowed','required_hours_per_day','office_shift_id')
-                        // ->whereIntegerInRaw('id',$salary_basic_employees)
-                        // ->whereIntegerNotInRaw('id',$paid_employees)
                         ->whereIntegerInRaw('id',$salary_basic_employees)
+                        ->whereIntegerNotInRaw('id',$paid_employees)
 						->where('is_active',1)
                         ->where('exit_date',NULL)
 						->get();
