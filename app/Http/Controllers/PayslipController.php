@@ -21,8 +21,11 @@ class PayslipController extends Controller {
 		$logged_user = auth()->user();
         $companies = company::all();
         // Handle date format conversion for month filtering
+        // For payment history, show all months by default if no filter is specified
+        $show_all_months = empty($request->filter_month_year);
+
         if (empty($request->filter_month_year)) {
-            $selected_date = now()->format('F-Y');
+            $selected_date = 'All'; // Show all months by default
         } else {
             $month_year_input = $request->filter_month_year;
 
@@ -68,24 +71,25 @@ class PayslipController extends Controller {
 		{
 			if (request()->ajax())
 			{
-                if (!empty($request->filter_employee))
-                {
-                    $payslips = Payslip::with(['employee:id,first_name,last_name,company_id,department_id','employee.company','employee.department'])
-                            ->where('employee_id', $request->filter_employee)
-                            ->where('month_year', $selected_date)
-                            ->get();
+                $payslipsQuery = Payslip::with(['employee:id,first_name,last_name,company_id,department_id','employee.company','employee.department']);
+
+                // Apply month filter only if not showing all months
+                if (!$show_all_months && $selected_date !== 'All') {
+                    $payslipsQuery->where('month_year', $selected_date);
                 }
-                elseif (!empty($request->filter_company)) {
-                    $payslips = Payslip::with(['employee:id,first_name,last_name,company_id,department_id','employee.company','employee.department'])
-                            ->where('company_id', $request->filter_company)
-                            ->where('month_year', $selected_date)
-                            ->get();
+
+                // Apply employee filter if specified
+                if (!empty($request->filter_employee)) {
+                    $payslipsQuery->where('employee_id', $request->filter_employee);
                 }
-                else {
-                    $payslips = Payslip::with( ['employee:id,first_name,last_name,company_id,department_id','employee.company','employee.department'])
-                            ->where('month_year',$selected_date)
-                            ->get();
+
+                // Apply company filter if specified
+                if (!empty($request->filter_company)) {
+                    $payslipsQuery->where('company_id', $request->filter_company);
                 }
+
+                // Order by most recent first
+                $payslips = $payslipsQuery->orderBy('created_at', 'desc')->get();
 
 				// return datatables()->of(Payslip::with( ['employee:id,first_name,last_name,company_id,department_id','employee.company','employee.department'])->latest('created_at'))
 				return datatables()->of($payslips)

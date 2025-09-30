@@ -53,9 +53,13 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="month_year">{{__('Select Month')}}</label>
-                                                    <input class="form-control month_year date"
+                                                    <select class="form-control selectpicker" name="month_year" id="month_year">
+                                                        <option value="">{{__('All Months')}}</option>
+                                                        <option value="custom">{{__('Select Specific Month')}}</option>
+                                                    </select>
+                                                    <input class="form-control month_year date" style="display: none;"
                                                            placeholder="{{__('Select Month')}}" readonly=""
-                                                           id="month_year" name="month_year" type="text" value="">
+                                                           id="month_year_picker" name="month_year_custom" type="text" value="">
                                                 </div>
                                             </div>
                                         </div>
@@ -121,7 +125,8 @@
             fill_datatable();
 
             function fill_datatable(filter_company = '', filter_employee = '', filter_month_year = '') {
-                $('#details_month_year').html($('#month_year').val());
+                var monthDisplay = filter_month_year ? filter_month_year : 'All Months';
+                $('#details_month_year').html('(' + monthDisplay + ')');
                 var table_table = $('#payslips-table').DataTable({
 
                     responsive: true,
@@ -232,18 +237,28 @@
             new $.fn.dataTable.FixedHeader($('#payslips-table').DataTable());
 
 
+            // Handle month year dropdown change
+            $('#month_year').on('change', function() {
+                if ($(this).val() === 'custom') {
+                    $('#month_year_picker').show();
+                    $(this).attr('name', 'month_year_selector');
+                    $('#month_year_picker').attr('name', 'month_year');
+                } else {
+                    $('#month_year_picker').hide();
+                    $(this).attr('name', 'month_year');
+                    $('#month_year_picker').attr('name', 'month_year_custom');
+                }
+            });
+
             $('#filter_form').on('submit',function (e) {
                 e.preventDefault();
                 var filter_company = $('#company_id').val();
                 var filter_employee = $('#employee_id').val();
-                var filter_month_year = $('#month_year').val();
+                var filter_month_year = $('#month_year').val() === 'custom' ? $('#month_year_picker').val() : $('#month_year').val();
 
-                if (filter_company !== '' && filter_employee !== '' && filter_month_year !== '') {
-                    $('#payslips-table').DataTable().destroy();
-                    fill_datatable(filter_company, filter_employee, filter_month_year);
-                } else {
-                    alert('{{__('Select Both filter option')}}');
-                }
+                // Allow filtering with any combination of filters (not requiring all to be selected)
+                $('#payslips-table').DataTable().destroy();
+                fill_datatable(filter_company, filter_employee, filter_month_year);
             });
         });
 
