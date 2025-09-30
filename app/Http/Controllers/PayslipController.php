@@ -337,6 +337,17 @@ class PayslipController extends Controller {
         $employee['pension_amount'] = $payslip->pension_amount;
 
 		// Prepare variables for PDF view - Handle both JSON strings and arrays
+		$overtimes_data = is_string($payslip->overtimes) ? json_decode($payslip->overtimes, true) ?: [] : (is_array($payslip->overtimes) ? $payslip->overtimes : []);
+
+		// Debug logging
+		\Log::info('Payslip PDF Data Debug', [
+			'employee_id' => $payslip->employee_id,
+			'month_year' => $payslip->month_year,
+			'overtimes_raw' => $payslip->overtimes,
+			'overtimes_decoded' => $overtimes_data,
+			'overtimes_count' => count($overtimes_data)
+		]);
+
 		$pdfData = array_merge($payslip->toArray(), $employee, [
 			'hours_amount' => $amount_hours,
 			'allowances' => is_string($payslip->allowances) ? json_decode($payslip->allowances, true) ?: [] : (is_array($payslip->allowances) ? $payslip->allowances : []),
@@ -344,7 +355,7 @@ class PayslipController extends Controller {
 			'loans' => is_string($payslip->loans) ? json_decode($payslip->loans, true) ?: [] : (is_array($payslip->loans) ? $payslip->loans : []),
 			'deductions' => is_string($payslip->deductions) ? json_decode($payslip->deductions, true) ?: [] : (is_array($payslip->deductions) ? $payslip->deductions : []),
 			'other_payments' => is_string($payslip->other_payments) ? json_decode($payslip->other_payments, true) ?: [] : (is_array($payslip->other_payments) ? $payslip->other_payments : []),
-			'overtimes' => is_string($payslip->overtimes) ? json_decode($payslip->overtimes, true) ?: [] : (is_array($payslip->overtimes) ? $payslip->overtimes : []),
+			'overtimes' => $overtimes_data,
 		]);
 
 		PDF::setOptions(['dpi' => 150, 'defaultFont' => 'sans-serif','tempDir'=>storage_path('temp')]);

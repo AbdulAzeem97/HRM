@@ -168,13 +168,23 @@
                 @if(isset($overtimes) && $overtimes)
                     @foreach($overtimes as $overtime)
                         <tr>
-                            <td class="py-3">{{$overtime['overtime_title']}}</td>
-                            <td>{{$overtime['overtime_amount']}}</td>
+                            <td class="py-3">{{$overtime['overtime_title'] ?? 'Overtime'}}</td>
+                            <td>{{str_replace(',', '', $overtime['overtime_amount'] ?? '0')}}</td>
                         </tr>
                         @php
-                            $total_earnings = $total_earnings + (float) ($overtime['overtime_amount'] ?? 0);
+                            // Remove commas before converting to float
+                            $overtime_amount = str_replace(',', '', $overtime['overtime_amount'] ?? '0');
+                            $total_earnings = $total_earnings + (float) $overtime_amount;
                         @endphp
                     @endforeach
+                @else
+                    <!-- DEBUG: Overtime count: {{ count($overtimes ?? []) }} -->
+                    @if(count($overtimes ?? []) > 0)
+                        <tr>
+                            <td class="py-3">DEBUG: Overtime Available</td>
+                            <td>{{ count($overtimes) }} records</td>
+                        </tr>
+                    @endif
                 @endif
 
                 <tr>
